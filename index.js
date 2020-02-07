@@ -1,51 +1,23 @@
-const express = require("express");
+const express = require("express"); // npm install --save espress
 
+const routes = require("./src/routes");
+const cors = require("cors"); // npm install --save cors
 const app = express();
+
+app.use(cors())
 
 const port = 3001;
 
-app.get("/", (req, res) => {
-  res.status(200).send(`<h2>You have reached the server!</h2>`);
-});
+const localStorage = {}
 
-// Users route
-app.get("/users", (req, res) => {
-  try {
-    const array = ["Petko", "Stanko", "Mirko"];
-    const name = req.query.name;
-    // The route param value is in the request object
-    if (name) {
-      const name = req.query.name.toUpperCase();
-      const found = array.find(element => element.toUpperCase() === name);
-      if (found) {
-        res.status(200).send(found);
-      } else {
-        res.status(200).send("Data not found");
-      }
-    }
+localStorage['1'] = "Petko";
+localStorage['2'] = "Stanko";
+localStorage['3'] = "Mirko";
 
-    if (Object.keys(req.query).length === 0) {
-      res.status(200).send(array);
-    }
-  } catch (error) {
-    console.error(error)
-    res.status(500).send("ERROR OCCURED" + error);
-  }
-});
+// Initialize routes with the server => app
+routes(app, localStorage);
 
-// Search users by ID
-app.get("/users/:id", (req, res) => {
-  const array = ["Petko", "Stanko", "Mirko"];
-
-  // The route param value is in the request object
-  const id = req.params.id;
-
-  if (array[id]) {
-    res.status(200).send(array[id]);
-  } else {
-    res.status(200).send("Data not found");
-  }
-});
+// const array = ["Petko", "Stanko", "Mirko"];
 
 app.listen(port, () => {
   console.log("Server started, hello world!");
