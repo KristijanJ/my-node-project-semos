@@ -6,19 +6,24 @@ function routes(app, localStorage) {
   // Users route
   app.get("/users", (req, res) => {
     try {
-      const array = ["Petko", "Stanko", "Mirko"];
       const name = req.query.name;
       // The route param value is in the request object
       if (name) {
         const name = req.query.name.toUpperCase();
-        const found = array.find(element => element.toUpperCase() === name);
+        let found = '';
+        for (const key in localStorage) {
+          const element = localStorage[key];
+          if (name === element.firstName.toUpperCase()) {
+            found = element;
+          }
+        }
         if (found) {
-          res.status(200).send(found);
+          res.status(200).json(found);
         } else {
-          res.status(200).send("Data not found");
+          res.status(200).json("Data not found");
         }
       } else {
-        res.status(200).send(localStorage);
+        res.status(200).json(localStorage);
       }
 
       // if (Object.keys(req.query).length === 0) {
@@ -26,7 +31,7 @@ function routes(app, localStorage) {
       // }
     } catch (error) {
       console.error(error);
-      res.status(500).send("ERROR OCCURED" + error);
+      res.status(500).json("ERROR OCCURED" + error);
     }
   });
 

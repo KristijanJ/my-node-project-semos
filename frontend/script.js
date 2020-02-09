@@ -1,4 +1,5 @@
 let renderedUserIds = [];
+let renderedUserNames = [];
 
 function getUsers() {
   fetch("http://localhost:3001/users")
@@ -29,16 +30,16 @@ function getUsers() {
 
 function getUserById() {
   const id = document.getElementById("userIdInput");
-  const userCards = document.getElementById("userCards");
+  const userCards = document.getElementById("userCardsById");
   if (id.value) {
     if (renderedUserIds.find(el => el == id.value)) {
-      $("#userAlreadyFoundToast").toast("show");
+      $("#userAlreadyFoundByIdToast").toast("show");
     } else {
       fetch("http://localhost:3001/users/" + id.value)
         .then(res => res.json())
         .then(data => {
           if (data === "Data not found") {
-            $("#noUserFoundToast").toast("show");
+            $("#noUserFoundByIdToast").toast("show");
           } else {
             renderedUserIds.push(data.id);
 
@@ -76,5 +77,57 @@ function getUserById() {
     }
   } else {
     $("#pleaseEnterIdToast").toast("show");
+  }
+}
+
+function getUserByName() {
+  const name = document.getElementById("userNameInput");
+  const userCards = document.getElementById("userCardsByName");
+  if (name.value) {
+    if (renderedUserNames.find(el => el.toUpperCase() == name.value.toUpperCase())) {
+      $("#userAlreadyFoundByNameToast").toast("show");
+    } else {
+      fetch("http://localhost:3001/users?name=" + name.value)
+        .then(res => res.json())
+        .then(data => {
+          if (data === "Data not found") {
+            $("#noUserFoundByNameToast").toast("show");
+          } else {
+            renderedUserNames.push(data.firstName);
+
+            const card = document.createElement("div");
+            card.classList.add("card");
+
+            const cardBody = document.createElement("div");
+            cardBody.classList.add("card-body");
+
+            const cardTitle = document.createElement("div");
+            cardTitle.classList.add("card-title");
+            cardTitle.innerHTML = data.firstName + " " + data.lastName;
+            cardBody.appendChild(cardTitle);
+
+            const cardEmail = document.createElement("div");
+            cardEmail.classList.add("card-subtitle");
+            cardEmail.classList.add("mb-2");
+            cardEmail.classList.add("text-muted");
+            cardEmail.innerHTML = data.email;
+            cardBody.appendChild(cardEmail);
+
+            const contact = document.createElement("a");
+            contact.classList.add("card-link");
+            contact.setAttribute("href", "mailto:" + data.email);
+            contact.innerHTML = "Contact";
+            cardBody.appendChild(contact);
+
+            card.appendChild(cardBody);
+            userCards.appendChild(card);
+
+            name.value = "";
+          }
+        })
+        .catch(err => console.error(err));
+    }
+  } else {
+    $("#pleaseEnterNameToast").toast("show");
   }
 }
