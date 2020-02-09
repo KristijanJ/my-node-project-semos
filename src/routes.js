@@ -18,7 +18,7 @@ function routes(app, localStorage) {
           res.status(200).send("Data not found");
         }
       } else {
-        res.status(200).send(array);
+        res.status(200).send(localStorage);
       }
 
       // if (Object.keys(req.query).length === 0) {

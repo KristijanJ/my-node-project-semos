@@ -10,9 +10,24 @@ const port = 3001;
 
 const localStorage = {}
 
-localStorage['1'] = "Petko";
-localStorage['2'] = "Stanko";
-localStorage['3'] = "Mirko";
+localStorage['1'] = {
+  id: 1,
+  firstName: "Petko",
+  lastName: "Petkovski",
+  email: "petko@gmail.com"
+};
+localStorage['2'] = {
+  id: 2,
+  firstName: "Stanko",
+  lastName: "Stankovski",
+  email: "stanko@gmail.com"
+};
+localStorage['3'] = {
+  id: 3,
+  firstName: "Mirko",
+  lastName: "Mirkovski",
+  email: "mirko@gmail.com"
+};
 
 // Initialize routes with the server => app
 routes(app, localStorage);
