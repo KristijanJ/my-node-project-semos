@@ -14,10 +14,7 @@ function getUsers() {
         th.innerHTML = user.id;
         tr.appendChild(th);
         let td = document.createElement("td");
-        td.innerHTML = user.firstName;
-        tr.appendChild(td);
-        td = document.createElement("td");
-        td.innerHTML = user.lastName;
+        td.innerHTML = user.name;
         tr.appendChild(td);
         td = document.createElement("td");
         td.innerHTML = user.email;

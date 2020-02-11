@@ -47,6 +47,31 @@ function routes(app, localStorage) {
       res.status(200).json("Data not found");
     }
   });
+
+  // BOOKS
+  app.post('/books/new', (req, res) => {
+    // receive data object for a new book
+    const data = req.body; // {...}
+    if (!data) {
+      res.status(400).json('Bad request, no data found.');
+    } else {
+      localStorage.push(data);
+      console.log(localStorage);
+      res.status(201).json('Entry successfully created.');
+    }
+  })
+
+  app.delete('/books/remove/:isbn', (req, res) => {
+    const found = localStorage.findIndex(element => element.isbn === req.params.isbn);
+
+    if (found) {
+      localStorage.splice(found, 1);
+      console.log(localStorage);
+      res.status(200).json('Entry succesfully deleted.')
+    } else {
+      res.status(400).json('Bad request, no data found.')
+    }
+  })
 }
 
 module.exports = routes
