@@ -39,8 +39,6 @@ localStorage.push({ isbn: '3', name: "The lord of the rings" });
 // Initialize routes with the server => app
 routes(app, localStorage);
 
-// const array = ["Petko", "Stanko", "Mirko"];
-
 app.listen(port, () => {
-  console.log("Server started, hello world!");
+  console.log("Server started on port " + port);
 });

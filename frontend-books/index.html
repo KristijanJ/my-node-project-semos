@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous" />
+  <title>Document</title>
+</head>
+
+<body>
+  <div class="container">
+    <!-- FORM -->
+    <div id="forms">
+      <div style="margin-top: 20px">
+        <h3 style="text-align: center;">New Book</h3>
+        <div class="form-group">
+          <input type="number" class="form-control" id="isbn1" placeholder="Enter book ISBN">
+        </div>
+        <div class="form-group">
+          <input type="text" class="form-control" id="name1" placeholder="Enter book Name">
+        </div>
+        <div class="form-group">
+          <input type="text" class="form-control" id="author1" placeholder="Enter book Author">
+        </div>
+      </div>
+    </div>
+
+    <!-- CREATE A BOOK BUTTON -->
+    <button class="btn btn-success btn-block" id="submitBook" onclick="createNewBook()">
+      Create a Book
+    </button>
+    <!-- CREATE MULTIPLE BOOKS BUTTON -->
+    <button class="btn btn-success btn-block" style="display:none;" id="submitBooks" onclick="createMultipleBooks()">
+      Create multiple Books
+    </button>
+
+    <!-- ADD A FORM BUTTON -->
+    <div style="margin-top: 30px">
+      <button class="btn btn-success btn-block" id="addForm" onclick="addNewForm()">
+        Add a form
+      </button>
+    </div>
+
+  </div>
+
+  <script>
+    let numberOfForms = 1;
+    function addNewForm() {
+      document.getElementById("submitBook").style.display = "none";
+      document.getElementById("submitBooks").style.display = "block";
+      numberOfForms++;
+      createNewForm(numberOfForms);
+    }
+
+    function createMultipleBooks() {
+      let books = [];
+      for (let i = 1; i <= numberOfForms; i++) {
+        let isbn = document.getElementById(`isbn${i}`).value;
+        let name = document.getElementById(`name${i}`).value;
+        let author = document.getElementById(`author${i}`).value;
+        books.push({ isbn, name, author })
+        console.log(...books)
+      }
+      fetch("http://localhost:3001/books/new/bulk", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(books)
+      })
+        .then(res => res.json())
+        .then(data => {
+          console.log(data);
+          if (data.message !== "Bad request, empty book fields.") {
+            for (let i = 1; i <= numberOfForms; i++) {
+              document.getElementById(`isbn${i}`).value = '';
+              document.getElementById(`name${i}`).value = '';
+              document.getElementById(`author${i}`).value = '';
+            }
+          }
+        });
+    }
+
+    function createNewBook() {
+      const data = {
+        isbn: document.getElementById("isbn1").value,
+        name: document.getElementById("name1").value,
+        author: document.getElementById("author1").value
+      };
+
+      fetch("http://localhost:3001/books/new", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      })
+        .then(res => res.json())
+        .then(data => {
+          console.log(data);
+          if (data.message === "Entry successfully created.") {
+            document.getElementById("isbn1").value = "";
+            document.getElementById("name1").value = "";
+            document.getElementById("author1").value = "";
+          }
+
+        });
+    }
+
+    function createNewForm(numberOfForms) {
+      // GET THE MAIN FORMS DIV
+      let forms = document.getElementById('forms');
+
+      // CREATE A PARENT DIV
+      let mainDiv = document.createElement('div');
+      mainDiv.style.marginTop = '20px';
+
+      // CREATE THE TITLE
+      let title = document.createElement('h3');
+      title.style.textAlign = 'center';
+      title.innerHTML = 'New Book';
+      mainDiv.appendChild(title);
+
+      // CREATE THE FIRST INPUT GROUP
+      let formGroup = document.createElement('div');
+      formGroup.classList.add('form-group');
+      let input = document.createElement('input');
+      input.classList.add('form-control');
+      input.type = 'number';
+      input.id = `isbn${numberOfForms}`;
+      input.placeholder = 'Enter book ISBN';
+      formGroup.appendChild(input);
+      mainDiv.appendChild(formGroup);
+
+      // CREATE THE SECOND INPUT GROUP
+      formGroup = document.createElement('div');
+      formGroup.classList.add('form-group');
+      input = document.createElement('input');
+      input.classList.add('form-control');
+      input.type = 'text';
+      input.id = `name${numberOfForms}`;
+      input.placeholder = 'Enter book Name';
+      formGroup.appendChild(input);
+      mainDiv.appendChild(formGroup);
+
+      // CREATE THE THIRD INPUT GROUP
+      formGroup = document.createElement('div');
+      formGroup.classList.add('form-group');
+      input = document.createElement('input');
+      input.classList.add('form-control');
+      input.type = 'text';
+      input.id = `author${numberOfForms}`;
+      input.placeholder = 'Enter book Author';
+      formGroup.appendChild(input);
+      mainDiv.appendChild(formGroup);
+
+      // APPEND FORM TO THE MAIN FORMS DIV
+      forms.appendChild(mainDiv);
+
+    }
+  </script>
+</body>
+
+</html>
