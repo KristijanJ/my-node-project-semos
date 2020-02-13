@@ -1,21 +1,27 @@
 const express = require("express"); // npm install --save espress
-const bodyParser = require("body-parser")
+const bodyParser = require("body-parser");
 
 const routes = require("./src/routes");
 const cors = require("cors"); // npm install --save cors
 const app = express();
 
-app.use(cors())
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser())
+app.use(cors());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser());
 
 const port = 3001;
 
 const localStorage = [];
 
-localStorage.push({ isbn: '1', name: "Crime and punishment" });
-localStorage.push({ isbn: '2', name: "Witcher" });
-localStorage.push({ isbn: '3', name: "The lord of the rings" });
+localStorage.push({ isbn: "1", name: "Crime and punishment" });
+localStorage.push({ isbn: "2", name: "Witcher" });
+localStorage.push({ isbn: "3", name: "The lord of the rings" });
+localStorage.push({
+  isbn: "4",
+  name: "Idiot",
+  author: "kiko",
+  createdDate: "2020-01-13T19:44:55.152Z"
+});
 
 // localStorage['1'] = {
 //   id: 1,

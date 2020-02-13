@@ -43,9 +43,70 @@
       </button>
     </div>
 
+    <hr>
+
+    <div style="margin-top: 30px">
+      <button class="btn btn-info btn-block" id="getBooks" onclick="getBooks()">
+        Get all books
+      </button>
+    </div>
+
+    <hr>
+
+    <div style="margin-top: 30px">
+      <button class="btn btn-info btn-block" id="getBooksCreatedToday" onclick="getBooksCreatedToday()">
+        Get books created today
+      </button>
+    </div>
+
+    <hr>
+
+    <div style="margin-top: 20px">
+      <h3 style="text-align: center;">Book by author</h3>
+      <div class="form-group">
+        <input type="text" class="form-control" id="searchByAuthor" placeholder="Enter author name">
+      </div>
+    </div>
+    <div style="margin-top: 10px">
+      <button class="btn btn-info btn-block" id="getBooksByAuthor" onclick="getBooksByAuthor()">
+        Get books created by author
+      </button>
+    </div>
+
+    <hr>
+
   </div>
 
   <script>
+
+    function getBooks() {
+      fetch("http://localhost:3001/books")
+      .then(res => res.json())
+      .then(data => console.log(data))
+    }
+
+    function getBooksCreatedToday() {
+      fetch("http://localhost:3001/books/createdToday")
+      .then(res => res.json())
+      .then(data => console.log(data))
+    }
+
+    function getBooksByAuthor() {
+      let author = document.getElementById("searchByAuthor");
+      if (author.value) {
+        fetch("http://localhost:3001/books/byAuthor/" + author.value)
+        .then(res => res.json())
+        .then(data => {
+          console.log(data);
+          if (data.message !== "No books found.") {
+            author.value = '';
+          }
+        })
+      } else {
+        console.error('Please enter an author!')
+      }
+    }
+
     let numberOfForms = 1;
     function addNewForm() {
       document.getElementById("submitBook").style.display = "none";

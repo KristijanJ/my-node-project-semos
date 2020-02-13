@@ -47,7 +47,47 @@ function routes(app, localStorage) {
     }
   });
 
-  // BOOKS
+  /*
+  BOOKS
+  */
+
+  app.get("/books", (req, res) => {
+    res.status(200).json(localStorage);
+  });
+
+  app.get("/books/createdToday", (req, res) => {
+    const booksCreatedToday = [];
+
+    let today = new Date();
+    let todayString =
+      today.getFullYear() + "/" + today.getMonth() + 1 + "/" + today.getDate();
+
+    localStorage.forEach(book => {
+      let bookDate = new Date(book.createdDate);
+      let bookDateString =
+        bookDate.getFullYear() + "/" + bookDate.getMonth()+1 + "/" + bookDate.getDate();
+
+      if (bookDateString === todayString) {
+        booksCreatedToday.push(book);
+      }
+    });
+
+    res.status(200).json(booksCreatedToday);
+  });
+
+  app.get("/books/byAuthor/:author", (req, res) => {
+    const author = req.params.author;
+    const foundBooks = 
+      localStorage.filter(book => {
+        if (book.author) return book.author.toUpperCase() === author.toUpperCase();
+      })
+    if (foundBooks.length > 0) {
+      res.status(200).json(foundBooks);
+    } else {
+      res.status(200).json({ message: 'No books found.' });
+    }
+  })
+
   app.post("/books/new", (req, res) => {
     // receive data object for a new book
     const data = req.body; // {...}
@@ -64,7 +104,7 @@ function routes(app, localStorage) {
           ISBN: data.isbn,
           NAME: data.name,
           AUTHOR: data.author
-        }
+        };
         res.status(400).json({
           message: "Bad request, empty book fields.",
           missingFields: missingFields
@@ -72,7 +112,11 @@ function routes(app, localStorage) {
       } else {
         const found = localStorage.find(element => element.isbn === data.isbn);
         if (!found) {
-          localStorage.push(data);
+          let today = new Date();
+          localStorage.push({
+            ...data,
+            createdDate: today
+          });
           console.log(localStorage);
           res
             .status(201)
@@ -100,15 +144,15 @@ function routes(app, localStorage) {
     data.forEach((book, i) => {
       if (!book.isbn || !book.name || !book.author) {
         missingFields = {
-          bookNumber: i+1,
+          bookNumber: i + 1,
           ISBN: book.isbn,
           NAME: book.name,
           AUTHOR: book.author
-        }
+        };
         emptyBooks.push(missingFields);
         console.log(emptyBooks);
       }
-    })
+    });
 
     if (emptyBooks.length > 0) {
       res.status(400).json({
@@ -121,12 +165,19 @@ function routes(app, localStorage) {
         if (found) {
           existingBooks.push(found);
         } else {
-          addedBooks.push(book);
-          localStorage.push(book);
+          let today = new Date();
+          addedBooks.push({
+            ...book,
+            createdDate: today
+          });
+          localStorage.push({
+            ...book,
+            createdDate: today
+          });
         }
       });
       res.status(201).json({
-        booksAdded: [ ...addedBooks ],
+        booksAdded: [...addedBooks],
         existingBooks: [...existingBooks],
         localStorage: localStorage
       });
