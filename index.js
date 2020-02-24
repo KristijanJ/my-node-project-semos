@@ -1,50 +1,61 @@
-const express = require("express"); // npm install --save espress
-const bodyParser = require("body-parser");
+const express = require('express'); // npm install express
 
-const routes = require("./src/routes");
-const cors = require("cors"); // npm install --save cors
-const app = express();
+const routes = require('./src/routes');
 
-app.use(cors());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser());
+const cors = require('cors'); // npm install cors
+
+const bodyParser = require('body-parser'); // used to handle POST requests
+
+const mongoose = require('mongoose'); // mongodb framework
+
+// .env fajlot e konfiguraciski, ne se pusha na git
+// i vo nego definirame globalni promenlivi 
+// soosetlivi informacii kako URL do baza/server, username password...
+// promenlivite definirani vo .env fajlot 
+//ni se dostapni vo process.env 
+require('dotenv').config();
+
+const server = express();
 
 const port = 3001;
 
-const localStorage = [];
+server.use(bodyParser.urlencoded({ extended: false }))
+server.use(bodyParser.json())
 
-localStorage.push({ isbn: "1", name: "Crime and punishment" });
-localStorage.push({ isbn: "2", name: "Witcher" });
-localStorage.push({ isbn: "3", name: "The lord of the rings" });
-localStorage.push({
-  isbn: "4",
-  name: "Idiot",
-  author: "kiko",
-  createdDate: "2020-01-13T19:44:55.152Z"
-});
+server.use(cors());
 
-// localStorage['1'] = {
-//   id: 1,
-//   firstName: "Petko",
-//   lastName: "Petkovski",
-//   email: "petko@gmail.com"
-// };
-// localStorage['2'] = {
-//   id: 2,
-//   firstName: "Stanko",
-//   lastName: "Stankovski",
-//   email: "stanko@gmail.com"
-// };
-// localStorage['3'] = {
-//   id: 3,
-//   firstName: "Mirko",
-//   lastName: "Mirkovski",
-//   email: "mirko@gmail.com"
-// };
+routes(server);
 
-// Initialize routes with the server => app
-routes(app, localStorage);
+mongoose.connect(
+    `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0-fgmiw.mongodb.net/test?retryWrites=true&w=majority`,
+    {useNewUrlParser: true, useUnifiedTopology: true}
+);
 
-app.listen(port, () => {
-  console.log("Server started on port " + port);
-});
+const db = mongoose.connection;
+
+db.on('error', (error) => { console.log('Error connecting '+ error) })
+
+db.once('open', () => {
+    console.log('Successfully connected to the db.')
+    server.listen(port, function () {
+        console.log(`Server started on port ${port}, hello world!`);
+
+        // create a document from the book model
+        // const firstBook = new models.Book({
+        //     isbn: 111,
+        //     title: 'Crime and punishment',
+        //     author: 'Dostoyevsky',
+        //     year: '1866'
+        // })
+        // // try to save the newly created book in the database
+        // firstBook.save((err, book) => {
+        //     if (err) {
+        //         console.log('Data was not saved: '+ err)
+        //     } else {
+        //         console.log(book)
+        //     }
+        // })
+    });
+})
+
+
