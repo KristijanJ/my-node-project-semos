@@ -26,6 +26,10 @@ function routes (server) {
 
     server.post('/add-book', services.createNewBook)
 
+    server.post('/update-book/:isbn', services.updateBook)
+
+    server.post('/update-author/:authorId', services.updateAuthor)
+
     server.post('/add-author', services.createNewAuthor)
 
     server.delete('/remove-book/:isbn', services.removeBook)
